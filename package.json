@@ -1,0 +1,23 @@
+{
+  "name": "backendempreendedorismo",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon ./src/index.js"
+  },
+  "author": "Jonathan",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^4.0.1",
+    "bcryptjs": "^2.4.3",
+    "express": "^4.17.1",
+    "fs": "0.0.1-security",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^5.9.6",
+    "mongose": "0.0.2-security",
+    "nodemon": "^2.0.2",
+    "path": "^0.12.7"
+  }
+}

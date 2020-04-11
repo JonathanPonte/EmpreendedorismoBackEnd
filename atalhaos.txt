@@ -1,0 +1,3 @@
+Crtl + D - Seleciona todas as palavras selecionadas de uma por uma
+Crtl + shift + l - Seleciona todas as palavras selecionadas
+shift + alt + f - identar

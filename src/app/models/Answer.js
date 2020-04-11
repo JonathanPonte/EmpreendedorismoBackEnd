@@ -1,0 +1,28 @@
+const mongoose = require('../../database');
+const bcrypt = require('bcryptjs');
+
+
+const AnswerSchema = new mongoose.Schema({
+    result: {
+        type: Number,
+        required: true
+    },
+    question: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Question',
+        require: true
+    },
+    answerOfPeople: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'AnswerOfPeople',
+        require: true
+    },
+    cratedAt: {
+        type: Date,
+        default: Date.now,
+    }
+});
+
+const Answer = mongoose.model('Answer', AnswerSchema);
+
+module.exports = Answer;
