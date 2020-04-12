@@ -7,14 +7,16 @@ const CategorySchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    image: {
+        type: String
+    },
     description: {
         type: String,
         required: true
     },
     scales: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Scale',
-        require: true
+        ref: 'Scale'
     }],
     cratedAt: {
         type: Date,

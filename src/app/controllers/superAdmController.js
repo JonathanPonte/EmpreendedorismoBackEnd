@@ -4,6 +4,9 @@ const bcrypt = require('bcryptjs');
 
 const Adm = require('../models/Adm');
 const User = require('../models/User');
+const Category = require('../models/Category');
+const Scale = require('../models/Scale');
+const Question = require('../models/Question');
 const type = require('../util/util.json');
 
 const router = express.Router();
@@ -43,7 +46,7 @@ router.post('/', async (req, res) => {
 
 });
 
-//atualizar modificar senha
+//modificar senha
 router.put('/reset_password', async (req, res) => {
     try {
         var { id, email, currentPassword, newPassword, confirmationPassword } = req.body;
@@ -63,11 +66,11 @@ router.put('/reset_password', async (req, res) => {
             return res.status(400).send({ error: 'Passwords must be equal' });
 
         const password = await cryptoPassword(newPassword);
-        
+
         const userModify = await User.findByIdAndUpdate(id, {
             email,
             password
-        }, {new: true});
+        }, { new: true });
 
         await userModify.save();
 
@@ -78,7 +81,7 @@ router.put('/reset_password', async (req, res) => {
     }
 });
 
-//criar novo Coletor
+//criar novo adm Coletor
 router.post('/collector', async (req, res) => {
     const { name, user } = req.body;
     var { email, password } = user;
@@ -102,6 +105,98 @@ router.post('/collector', async (req, res) => {
         console.log(error)
         return res.status(400).send({ error: 'Error register' });
     }
+
+});
+
+// crud Categorias
+
+//criação da categoria, PROCURAR COMO FAZ UPLOAD DE IMAGEM
+router.post('/category', async (req, res) => {
+    const { title, image, description } = req.body;
+    try {
+
+        const category = await Category.create({ title, image, description });
+        await category.save();
+
+        return res.status(201).send();
+    } catch (error) {
+        console.log(error);
+        return res.status(400).send({ error: 'Error create category' });
+    }
+});
+
+//update da categoria
+router.put('/category/:categoryId', async (req, res) => {
+    const { title, image, description } = req.body
+    try {
+        const category = await Category.findByIdAndUpdate(req.params.categoryId, {
+            title,
+            image,
+            description
+        }, { new: true });
+
+        await category.save();
+
+        return res.send();
+    } catch (error) {
+        console.log(error);
+        return res.status(400).send({ error: 'Error update category' });
+    }
+
+});
+
+//Delete da categoria 
+router.delete('/category/:categoryId', async (req, res) => {
+    try {
+        const category = await Category.findByIdAndDelete(req.params.categoryId);
+
+        return res.send();
+    } catch (error) {
+        return res.status(400).send({ error: 'Error deleting project' });
+    }
+});
+
+// CRUD escala
+
+//create escala
+router.post('/scale', async (req, res) => {
+    const { title, minScaleValue, maxScaleValue, correctScores, category, questions } = req.body;
+    try {
+
+        const findCategory = await Category.findById({ category });
+
+        if (!category)
+            return res.status(400).send({ error: 'Category does not exist' });
+
+        const scale = await Scale.create({ title, minScaleValue, maxScaleValue, correctScores });
+        scale.questions = questions;
+        await scale.save();
+        findCategory.scales.push(scale);
+        await findCategory.save();
+
+        return res.send();
+    } catch (error) {
+        return res.status(400).send({ error: 'Error create scale' });
+    }
+
+});
+
+//delete escala
+router.delete('/scale/:scaleId', async (req, res) => {
+    try {
+
+        const scale = await Scale.findByIdAndDelete(req.params.scaleId);
+
+        const category = await Category.findById(scale.category);
+        category.scales.delete(scale);
+
+        await category.save()
+
+        return res.send()
+    } catch (error) {
+        return res.status(400).send({ error: 'Error deleting scale' });
+    }
+
 
 });
 
