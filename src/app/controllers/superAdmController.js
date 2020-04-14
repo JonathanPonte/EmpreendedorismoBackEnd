@@ -19,7 +19,7 @@ async function cryptoPassword(password) {
 
 router.use(authmiddleware);
 
-//criar novo superAdm
+//criar novo superAdm - Ok
 router.post('/', async (req, res) => {
     const { name, user } = req.body;
     var { email, password } = user;
@@ -46,7 +46,7 @@ router.post('/', async (req, res) => {
 
 });
 
-//modificar senha
+//modificar senha - Ok
 router.put('/reset_password', async (req, res) => {
     try {
         var { id, email, currentPassword, newPassword, confirmationPassword } = req.body;
@@ -81,7 +81,7 @@ router.put('/reset_password', async (req, res) => {
     }
 });
 
-//criar novo adm Coletor
+//criar novo adm Coletor - Ok
 router.post('/collector', async (req, res) => {
     const { name, user } = req.body;
     var { email, password } = user;
@@ -110,22 +110,27 @@ router.post('/collector', async (req, res) => {
 
 // crud Categorias
 
-//criação da categoria, PROCURAR COMO FAZ UPLOAD DE IMAGEM
+//criação da categoria - Ok (PROCURAR COMO FAZ UPLOAD DE IMAGEM)
 router.post('/category', async (req, res) => {
-    const { title, image, description } = req.body;
+    const { admId, title, image, description } = req.body;
     try {
+
+        const adm = await Adm.findById(admId);
+
+        if (!adm)
+            return res.status(401).send({ erro: 'Adm not found' });
 
         const category = await Category.create({ title, image, description });
         await category.save();
 
-        return res.status(201).send();
+        return res.status(201).send({ category });
     } catch (error) {
         console.log(error);
         return res.status(400).send({ error: 'Error create category' });
     }
 });
 
-//update da categoria
+//update da categoria - OK
 router.put('/category/:categoryId', async (req, res) => {
     const { title, image, description } = req.body
     try {
@@ -137,7 +142,7 @@ router.put('/category/:categoryId', async (req, res) => {
 
         await category.save();
 
-        return res.send();
+        return res.send({ category });
     } catch (error) {
         console.log(error);
         return res.status(400).send({ error: 'Error update category' });
@@ -145,7 +150,7 @@ router.put('/category/:categoryId', async (req, res) => {
 
 });
 
-//Delete da categoria 
+//Delete da categoria - Ok
 router.delete('/category/:categoryId', async (req, res) => {
     try {
         const category = await Category.findByIdAndDelete(req.params.categoryId);
@@ -163,19 +168,29 @@ router.post('/scale', async (req, res) => {
     const { title, minScaleValue, maxScaleValue, correctScores, category, questions } = req.body;
     try {
 
-        const findCategory = await Category.findById({ category });
+        const findCategory = await Category.findById(category);
 
         if (!category)
             return res.status(400).send({ error: 'Category does not exist' });
 
         const scale = await Scale.create({ title, minScaleValue, maxScaleValue, correctScores });
-        scale.questions = questions;
+        var questionsScale = []
+
+        await Promise.all(questions.map(async q => {
+            const { title } = q;
+            const question = new Question({ title });
+            await question.save();
+            questionsScale.push(question);
+        }));
+
+        scale.questions = questionsScale;
         await scale.save();
         findCategory.scales.push(scale);
         await findCategory.save();
 
-        return res.send();
+        return res.send({ findCategory });
     } catch (error) {
+        console.log(error);
         return res.status(400).send({ error: 'Error create scale' });
     }
 

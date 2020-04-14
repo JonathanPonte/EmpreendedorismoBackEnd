@@ -9,8 +9,7 @@ const QuestionSchema = new mongoose.Schema({
     },
     scale: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Scale',
-        require: true
+        ref: 'Scale'
     },
     answer: [{
         type: mongoose.Schema.Types.ObjectId,

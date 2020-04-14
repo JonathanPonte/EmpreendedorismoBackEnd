@@ -5,6 +5,7 @@ const authConfig = require('../../config/auth');
 const User = require('../models/User');
 const People = require('../models/People');
 const Adm = require('../models/Adm');
+const Category = require('../models/Category');
 const router = express.Router();
 const crypto = require('crypto');
 const util = require('../util/util.json')
@@ -104,6 +105,17 @@ router.post('/login', async (req, res) => {
         return res.status(400).send({ error: 'Error login' });
     }
 
+});
+
+//listar categorias
+router.get('/categorys', async (req, res) => {
+    try {
+        const categorys = await Category.find();
+
+        return res.send({ categorys });
+    } catch (error) {
+        return res.status(400).send({ erro: 'Error get categorys'});
+    }
 });
 
 module.exports = app => app.use('/auth', router);
