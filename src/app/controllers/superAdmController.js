@@ -163,7 +163,7 @@ router.delete('/category/:categoryId', async (req, res) => {
 
 // CRUD escala
 
-//create escala
+//create escala - OK
 router.post('/scale', async (req, res) => {
     const { title, minScaleValue, maxScaleValue, correctScores, category, questions } = req.body;
     try {

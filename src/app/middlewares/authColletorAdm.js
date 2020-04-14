@@ -20,10 +20,22 @@ module.exports = (req, res, next) => {
         return res.status(401).send({ error: 'Token malformatted' });
 
     jwt.verify(token, authConfig.secretCollectorAdm, (err, decoded) => {
-        if (err) return res.status(401).send({ error: 'Token invalid' });
 
-        req.userId = decoded.id;
-        return next();
+        if (err) {
+            jwt.verify(token, authConfig.secretSuperAdm, (err, decoded) => {
+                if (err) return res.status(401).send({ error: 'Token invalid' });
+
+                req.userId = decoded.id;
+                return next();
+            });
+        }
+        if (decoded != undefined) {
+            req.userId = decoded.id;
+            return next();
+        }
     });
+
+
+
 };
 
