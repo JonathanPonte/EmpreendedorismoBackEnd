@@ -15,8 +15,7 @@ const router = express.Router();
 
 router.use(authmiddleware);
 
-// Rota de resposta de escala usuario commum
-router.post('/scale', async (req, res) => {
+async function answerScale(req, res) {
     const { peopleId, scaleId, answers } = req.body;
 
     try {
@@ -31,7 +30,7 @@ router.post('/scale', async (req, res) => {
 
         await Promise.all(questions.map(async q => {
             answers.map(async a => {
-                const {result, question} = a;
+                const { result, question } = a;
                 if (q._id == a.question._id) {
                     sumResul += result;
                     const answerF = await Answer.create(result)
@@ -46,17 +45,13 @@ router.post('/scale', async (req, res) => {
 
         await scale.save()
 
-
-
-
         //gerar media;
 
         return res.send();
     } catch (error) {
         return res.status(400).send({ error: 'Error answer scale' });
     }
+}
 
-});
 
-
-module.exports = app => app.use('/user', router);
+module.exports = { answerScale }

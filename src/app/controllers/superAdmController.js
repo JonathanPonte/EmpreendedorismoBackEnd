@@ -20,7 +20,7 @@ async function cryptoPassword(password) {
 router.use(authmiddleware);
 
 //criar novo superAdm - Ok
-router.post('/', async (req, res) => {
+async function createSuperAdm(req, res) {
     const { name, user } = req.body;
     var { email, password } = user;
 
@@ -43,11 +43,11 @@ router.post('/', async (req, res) => {
         console.log(error)
         return res.status(400).send({ error: 'Error register' });
     }
+}
 
-});
 
 //modificar senha - Ok
-router.put('/reset_password', async (req, res) => {
+async function resetPassword(req, res) {
     try {
         var { id, email, currentPassword, newPassword, confirmationPassword } = req.body;
 
@@ -79,10 +79,14 @@ router.put('/reset_password', async (req, res) => {
         console.log(error);
         return res.status(400).send({ error: 'Error update super adm' });
     }
-});
+
+}
+
+
+
 
 //criar novo adm Coletor - Ok
-router.post('/collector', async (req, res) => {
+async function createCollectorAdm(req, res) {
     const { name, user } = req.body;
     var { email, password } = user;
 
@@ -106,12 +110,13 @@ router.post('/collector', async (req, res) => {
         return res.status(400).send({ error: 'Error register' });
     }
 
-});
+}
+
 
 // crud Categorias
 
 //criação da categoria - Ok (PROCURAR COMO FAZ UPLOAD DE IMAGEM)
-router.post('/category', async (req, res) => {
+async function createCategory(req, res) {
     const { admId, title, image, description } = req.body;
     try {
 
@@ -128,10 +133,11 @@ router.post('/category', async (req, res) => {
         console.log(error);
         return res.status(400).send({ error: 'Error create category' });
     }
-});
+}
+
 
 //update da categoria - OK
-router.put('/category/:categoryId', async (req, res) => {
+async function updateCategory(req, res) {
     const { title, image, description } = req.body
     try {
         const category = await Category.findByIdAndUpdate(req.params.categoryId, {
@@ -147,11 +153,11 @@ router.put('/category/:categoryId', async (req, res) => {
         console.log(error);
         return res.status(400).send({ error: 'Error update category' });
     }
+}
 
-});
 
 //Delete da categoria - Ok
-router.delete('/category/:categoryId', async (req, res) => {
+async function deleteCategory(req, res) {
     try {
         const category = await Category.findByIdAndDelete(req.params.categoryId);
 
@@ -159,12 +165,12 @@ router.delete('/category/:categoryId', async (req, res) => {
     } catch (error) {
         return res.status(400).send({ error: 'Error deleting project' });
     }
-});
+}
 
 // CRUD escala
 
 //create escala - OK
-router.post('/scale', async (req, res) => {
+async function createScale(req, res) {
     const { title, minScaleValue, maxScaleValue, correctScores, category, questions } = req.body;
     try {
 
@@ -193,11 +199,10 @@ router.post('/scale', async (req, res) => {
         console.log(error);
         return res.status(400).send({ error: 'Error create scale' });
     }
-
-});
+}
 
 //delete escala
-router.delete('/scale/:scaleId', async (req, res) => {
+async function deleteScale(req, res) {
     try {
 
         const scale = await Scale.findByIdAndDelete(req.params.scaleId);
@@ -211,9 +216,18 @@ router.delete('/scale/:scaleId', async (req, res) => {
     } catch (error) {
         return res.status(400).send({ error: 'Error deleting scale' });
     }
+}
 
 
-});
 
 
-module.exports = app => app.use('/adm', router);
+module.exports = {
+    createSuperAdm,
+    resetPassword,
+    createCollectorAdm,
+    createCategory,
+    updateCategory,
+    deleteCategory,
+    createScale,
+    deleteScale
+};

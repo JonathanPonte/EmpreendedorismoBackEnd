@@ -11,7 +11,7 @@ app.use(bodyParser.json());
 //entender quando passar parametros via url
 app.use(bodyParser.urlencoded({extended: false}));
  
-require('./src/app/controllers/index')(app);
+require('./src/app/routers/index')(app);
 
 DefaultDatabd.createAdm();
 

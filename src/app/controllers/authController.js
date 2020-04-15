@@ -1,4 +1,3 @@
-const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const authConfig = require('../../config/auth');
@@ -6,8 +5,6 @@ const User = require('../models/User');
 const People = require('../models/People');
 const Adm = require('../models/Adm');
 const Category = require('../models/Category');
-const router = express.Router();
-const crypto = require('crypto');
 const util = require('../util/util.json')
 
 function generateToken(params = {}, secretCod) {
@@ -23,8 +20,7 @@ async function cryptoPassword(password) {
  }
  
 // registro de usuario comum no sistema
-router.post('/register', async (req, res) => {
-
+async function registerUser(req, res){
     try {
         const { name, user } = req.body
         const email = user.email;
@@ -57,10 +53,10 @@ router.post('/register', async (req, res) => {
         console.log(error)
         return res.send({error: 'Error on register'})
     }
-});
+}
 
 //atenticar login baseado no tipo de usuario
-router.post('/login', async (req, res) => {
+async function login(req, res){
     const { email, password } = req.body;
 
     try {
@@ -105,10 +101,10 @@ router.post('/login', async (req, res) => {
         return res.status(400).send({ error: 'Error login' });
     }
 
-});
+}
 
 //listar categorias
-router.get('/categorys', async (req, res) => {
+async function listCategorys(req, res){
     try {
         const categorys = await Category.find();
 
@@ -116,6 +112,7 @@ router.get('/categorys', async (req, res) => {
     } catch (error) {
         return res.status(400).send({ erro: 'Error get categorys'});
     }
-});
+}
 
-module.exports = app => app.use('/auth', router);
+
+module.exports = { registerUser, login, listCategorys };
