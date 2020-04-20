@@ -9,13 +9,11 @@ const AnswerSchema = new mongoose.Schema({
     },
     question: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Question',
-        require: true
+        ref: 'Question'
     },
     answerOfPeople: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'AnswerOfPeople',
-        require: true
+        ref: 'AnswerOfPeople'
     },
     cratedAt: {
         type: Date,

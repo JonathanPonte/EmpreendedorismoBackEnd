@@ -13,7 +13,7 @@ const AnswerOfPeopleSchema = new mongoose.Schema({
         ref: 'Scale',
         require: true
     },
-    answer: [{
+    answers: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Answer',
         require: true

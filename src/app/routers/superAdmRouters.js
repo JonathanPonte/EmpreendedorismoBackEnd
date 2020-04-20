@@ -3,7 +3,7 @@ const router = express.Router();
 const superAdmController = require('../controllers/superAdmController');
 const authmiddleware = require('../middlewares/authSuperAdm');
 
-router.use(authmiddleware);
+//router.use(authmiddleware);
 
 
 router.post('/', async (req, res) => {
@@ -19,7 +19,7 @@ router.post('/collector', async (req, res) => {
 });
 
 router.post('/category', async (req, res) => {
-    return superAdmController.createCatrgory(req, res);
+    return superAdmController.createCategory(req, res);
 });
 
 router.put('/category/:categoryId', async (req, res) => {
