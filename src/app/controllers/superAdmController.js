@@ -38,7 +38,7 @@ async function createSuperAdm(req, res) {
 
         await adm.save();
 
-        return res.status(201).send({ adm });
+        return res.status(201).send({ "Status": "201Created" });
     } catch (error) {
         console.log(error)
         return res.status(400).send({ error: 'Error register' });
@@ -74,7 +74,7 @@ async function resetPassword(req, res) {
 
         await userModify.save();
 
-        return res.send();
+        return res.send({ Status: '200 OK' });
     } catch (error) {
         console.log(error);
         return res.status(400).send({ error: 'Error update super adm' });

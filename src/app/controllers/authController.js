@@ -1,11 +1,15 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const authConfig = require('../../config/auth');
+
+
 const User = require('../models/User');
 const People = require('../models/People');
 const Adm = require('../models/Adm');
 const Category = require('../models/Category');
+
 const util = require('../util/util.json')
+
 
 function generateToken(params = {}, secretCod) {
     return jwt.sign(params, secretCod, {
@@ -15,12 +19,12 @@ function generateToken(params = {}, secretCod) {
 
 async function cryptoPassword(password) {
     const hash = await bcrypt.hash(password, 10);
- 
-     return hash
- }
- 
+
+    return hash
+}
+
 // registro de usuario comum no sistema
-async function registerUser(req, res){
+async function registerUser(req, res) {
     try {
         const { name, user } = req.body
         const email = user.email;
@@ -40,23 +44,23 @@ async function registerUser(req, res){
         await peopleUser.save();
 
         people.user = peopleUser;
-        
-        console.log(people.user);    
+
+        console.log(people.user);
 
         await people.save();
 
         people.user.password = undefined;
 
         //mandar token de acesso
-        return res.status(201).send();
+        return res.status(201).send({ Status: '201Created' });
     } catch (error) {
         console.log(error)
-        return res.send({error: 'Error on register'})
+        return res.send({ error: 'Error on register' })
     }
 }
 
 //atenticar login baseado no tipo de usuario
-async function login(req, res){
+async function login(req, res) {
     const { email, password } = req.body;
 
     try {
@@ -103,16 +107,25 @@ async function login(req, res){
 
 }
 
+async function loginWithFacebook() {
+
+    console.log("opa");
+
+
+}
+
 //listar categorias
-async function listCategorys(req, res){
+async function listCategorys(req, res) {
+
     try {
         const categorys = await Category.find();
 
         return res.send({ categorys });
     } catch (error) {
-        return res.status(400).send({ erro: 'Error get categorys'});
+        return res.status(400).send({ erro: 'Error get categorys' });
     }
 }
 
 
-module.exports = { registerUser, login, listCategorys };
+
+module.exports = { registerUser, login, listCategorys, loginWithFacebook };

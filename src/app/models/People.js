@@ -7,8 +7,7 @@ const PeopleSchema = new mongoose.Schema({
         required: true
     },
     birthdate: {
-        type: Date,
-        required: true
+        type: Date
     },
     user: {
         //forma que o mongo guarda um objeto no banco

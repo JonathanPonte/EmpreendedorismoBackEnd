@@ -10,7 +10,7 @@ router.post('/', async (req, res) => {
     return superAdmController.createSuperAdm(req, res);
 });
 
-router.put('/reset_password', async (req, res) => {
+router.put('/change_password', async (req, res) => {
     return superAdmController.resetPassword(req, res);
 });
 
