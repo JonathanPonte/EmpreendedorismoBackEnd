@@ -135,6 +135,27 @@ async function createCategory(req, res) {
     }
 }
 
+async function uploadImage(req, res) {
+    
+    try {    
+        const file = req.file
+
+        console.log(req.body);
+        
+
+        return res.send({ file });
+    } catch (error) {
+        return res.status(400).send({ error: 'Error create exercise' });
+    }
+}
+
+async function getImage(req, res){
+    try {
+        return res.sendFile(path.join(__dirname, '../../uploads/' + req.params.fileName ));
+    } catch (error) {
+        
+    }
+}
 
 //update da categoria - OK
 async function updateCategory(req, res) {
@@ -225,6 +246,8 @@ module.exports = {
     createSuperAdm,
     resetPassword,
     createCollectorAdm,
+    uploadImage,
+    getImage,
     createCategory,
     updateCategory,
     deleteCategory,

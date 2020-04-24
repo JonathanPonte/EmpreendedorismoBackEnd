@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const superAdmController = require('../controllers/superAdmController');
 const authmiddleware = require('../middlewares/authSuperAdm');
+const multer = require('multer');
+const multerConfig = require('../../modules/multer/multerConfig');
 
 //router.use(authmiddleware);
 
@@ -17,6 +19,14 @@ router.put('/change_password', async (req, res) => {
 router.post('/collector', async (req, res) => {
     return superAdmController.createCollectorAdm(req, res);
 });
+
+router.post('/image', multer(multerConfig).single('file'), async (req, res) => {
+    return superAdmController.uploadImage(req, res);
+});
+
+router.get('/image/:fileName', async (req, res) => {
+    return admController.getImage(req, res);
+})
 
 router.post('/category', async (req, res) => {
     return superAdmController.createCategory(req, res);
