@@ -13,6 +13,10 @@ const AnswerOfPeopleSchema = new mongoose.Schema({
         ref: 'Scale',
         require: true
     },
+    average: {
+        type: Number,
+        required: true
+    },
     answers: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Answer',

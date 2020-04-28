@@ -19,15 +19,16 @@ async function answerScale(req, res) {
         const people = await People.findById(peopleId);
         const scale = await Scale.findById(scaleId);
 
-        await AnswersOfPeople.deleteOne({ scale, people });
+        console.log(scaleId);
+        const a = await AnswersOfPeople.deleteOne({ scale, people });
+        console.log(a);
+        
 
         const answersOfPeople = new AnswersOfPeople();
         answersOfPeople.people = people;
         answersOfPeople.scale = scale;
         const answersP = []
         var respPeople = 0;
-        var respTotal = scale.maxScaleValue * scale.questions.length;
-        var correctScore = scale.correctScores;
 
         await Promise.all(answers.map(async a => {
             const eachAnswer = new Answer()
@@ -38,24 +39,52 @@ async function answerScale(req, res) {
             answersP.push(eachAnswer);
         }))
         answersOfPeople.answers = answersP;
-        await answersOfPeople.save(); 
+        answersOfPeople.average = parseFloat(generateAverage(scale, respPeople).toFixed(2));
+        await answersOfPeople.save();
+        const aops = await AnswersOfPeople.find({ scale });
+        console.log(aops.length); 
+        const performance = generatePerformance(aops, answersOfPeople.average);
 
-        const valueBefore = 10/correctScore;
-        const valueAfter = 10/((respTotal + 1) - correctScore);
-        var media = 0;
 
-        if(respPeople <= correctScore){
-            media = respPeople * valueBefore;
-        }else{
-            media = 10 - ((respPeople - correctScore) * valueAfter);
-        }
-
-        return res.send({ media: media });
+        return res.send({avarege: answersOfPeople.average, performance: performance });
     } catch (error) {
         console.log(error);
         return res.status(400).send({ error: 'Error answer scale' });
     }
 }
+
+function generatePerformance(aops, media) {
+    var total = aops.length;//2
+    var countPeoples = 0
+    console.log(media);
+    aops.map(aop => {
+        console.log(aop.average);
+        if (aop.average <= media) {
+            console.log(aop.average);
+            countPeoples++;
+        }
+    });
+
+    if(total == 0)
+        return 100;
+    
+    return (countPeoples * 100) / total;
+}
+
+function generateAverage(scale, respPeople) {
+    var respTotal = scale.maxScaleValue * scale.questions.length;
+    var correctScore = scale.correctScores;
+    const valueBefore = 10 / correctScore;
+    const valueAfter = 10 / ((respTotal + 1) - correctScore);
+    var media = 0;
+
+    if (respPeople <= correctScore) {
+        return media = respPeople * valueBefore;
+    } else {
+        return media = 10 - ((respPeople - correctScore) * valueAfter);
+    }
+}
+
 
 
 module.exports = { answerScale }
