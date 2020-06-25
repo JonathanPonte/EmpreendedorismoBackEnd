@@ -9,6 +9,10 @@ const Scale = require('../models/Scale');
 const Question = require('../models/Question');
 const type = require('../util/util.json');
 
+const crypto = require('crypto');
+const fs = require('fs');
+const Path = require('path');
+
 const router = express.Router();
 
 async function cryptoPassword(password) {
@@ -113,26 +117,61 @@ async function createCollectorAdm(req, res) {
 }
 
 
+async function getAdms(req, res){
+
+    try {
+        const adms = await Adm.find();
+
+        return res.send(adms);
+    } catch (error) {
+        
+    }
+
+}
+
 // crud Categorias
 
 //criação da categoria - Ok (PROCURAR COMO FAZ UPLOAD DE IMAGEM)
 async function createCategory(req, res) {
-    const { admId, title, image, description } = req.body;
+    let { admId, title, image, imageExtension, description } = req.body;
     try {
-
         const adm = await Adm.findById(admId);
 
         if (!adm)
             return res.status(401).send({ erro: 'Adm not found' });
 
-        const category = await Category.create({ title, image, description });
-        await category.save();
-
-        return res.status(201).send({ category });
+        await base64ToFile(image, imageExtension, async name => {
+            image = name;
+            const category = await Category.create({ title, image, description });
+            await category.save();
+    
+            return res.status(201).send({ category });
+        });
     } catch (error) {
         console.log(error);
         return res.status(400).send({ error: 'Error create category' });
     }
+}
+
+async function base64ToFile(base64, extension, cb) {
+    var fileName = "";
+
+    const name = await crypto.randomBytes(16, (err, hash) => {
+        fileName = `${hash.toString('hex')}-image${extension}`;
+        const base64file = base64.split(';base64,').pop();
+
+
+        fs.writeFile('./src/uploads/' + fileName, base64file, { encoding: 'base64' }, function (err) {
+            console.log('file created');
+        });
+
+        //console.log(fileName);
+
+        fileName = "adm/image/" + fileName;
+
+        cb(fileName);
+    })
+
 }
 
 async function uploadImage(req, res) {
@@ -149,13 +188,17 @@ async function uploadImage(req, res) {
     }
 }
 
-async function getImage(req, res){
+async function getImage(req, res) {
     try {
-        return res.sendFile(path.join(__dirname, '../../uploads/' + req.params.fileName ));
+        
+        return res.sendFile(Path.join(__dirname, '../../uploads/' + req.params.fileName));
     } catch (error) {
+        console.log(error);
         
     }
 }
+
+
 
 //update da categoria - OK
 async function updateCategory(req, res) {
@@ -192,34 +235,74 @@ async function deleteCategory(req, res) {
 
 //create escala - OK
 async function createScale(req, res) {
-    const { title, minScaleValue, maxScaleValue, correctScores, category, questions } = req.body;
+    let { title, informations, minLabel, maxLabel, minScaleValue, maxScaleValue, correctScores, questions, extension,image } = req.body;
     try {
 
-        const findCategory = await Category.findById(category);
+        base64ToFile(image, extension, async name => {
+            image = name;
+            const scale = await Scale.create({ title, informations, minLabel, maxLabel, minScaleValue, maxScaleValue, correctScores, image });
+            var questionsScale = []
+    
+            await Promise.all(questions.map(async q => {
+                const { title } = q;
+                const question = new Question({ title });
+                await question.save();
+                questionsScale.push(question);
+            }));
+    
+            scale.questions = questionsScale;
 
-        if (!category)
-            return res.status(400).send({ error: 'Category does not exist' });
-
-        const scale = await Scale.create({ title, minScaleValue, maxScaleValue, correctScores });
-        var questionsScale = []
-
-        await Promise.all(questions.map(async q => {
-            const { title } = q;
-            const question = new Question({ title });
-            await question.save();
-            questionsScale.push(question);
-        }));
-
-        scale.questions = questionsScale;
-        await scale.save();
-        findCategory.scales.push(scale);
-        await findCategory.save();
-
-        return res.send({ findCategory });
+            await scale.save();
+    
+            return res.send({ scale });
+        });
+    
+        
     } catch (error) {
         console.log(error);
         return res.status(400).send({ error: 'Error create scale' });
     }
+}
+
+async function updateScale(req, res){
+    const { _id, title, informations, minLabel, maxLabel, minScaleValue, maxScaleValue, image, extension, questions} = req.body;
+    try {
+        
+        const scale = await Scale.find(_id);
+        scale.title = title;
+        scale.informations = informations;
+        scale.minLabel = minLabel;
+        scale.maxLabel = maxLabel;
+        scale.minScaleValue = minScaleValue;
+        scale.maxScaleValue = maxScaleValue;
+
+        if(!image.includes("adm/image")){
+            await Promise.all(base64ToFile(image, extension, async a => {
+                scale.image = a;
+            }))
+        }
+        
+        // colocar questions
+
+        console.log(scale);
+        
+        return res.send({ opa });
+    } catch (error) {
+        return res.status(400).send({Error: 'Error updade scale'});
+    }
+}
+
+
+async function getScale(req, res){
+    const _id = req.params.id;
+    try {
+        const scale = await Scale.findById(_id);
+
+        return res.send(scale);
+    } catch (error) {
+        return res.status(400).send({ Error: 'Error get scale'})
+    }
+
 }
 
 //delete escala
@@ -252,5 +335,8 @@ module.exports = {
     updateCategory,
     deleteCategory,
     createScale,
-    deleteScale
+    deleteScale,
+    getScale,
+    getAdms,
+    updateScale
 };

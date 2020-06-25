@@ -3,11 +3,11 @@ const router = express.Router();
 const CommumUserController = require('../controllers/CommumUserController');
 const authmiddleware = require('../middlewares/authCommumUser');
 
-//router.use(authmiddleware);
+// router.use(authmiddleware);
 
 // Rota de resposta de escala usuario commum
-router.post('/scale', async (req, res) => {
-    return CommumUserController.answerScale(req, res);
-});
+router.post('/scale', CommumUserController.answerScale);
+
+router.get('/answer_of_people', CommumUserController.getAnswerOfPeople);
 
 module.exports = app => app.use('/user', router);

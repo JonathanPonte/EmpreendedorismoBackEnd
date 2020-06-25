@@ -5,8 +5,7 @@ const authmiddleware = require('../middlewares/authColletorAdm');
 
 //router.use(authmiddleware);
 
-router.get('/scale/:scaleId', async (req, res) => {
-    return collectorController.getCsvFile(req, res);
-});
+//get Csv de uma escala
+router.get('/scale/:scaleId', collectorController.getCsvFile);
 
 module.exports = app => app.use('/collector', router);

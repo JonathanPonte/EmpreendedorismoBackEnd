@@ -2,17 +2,21 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const DefaultDatabd = require('./src/app/util/DefaultDatadb');
 const passport  = require('passport');
+const rateLimiter = require('./src/app/middlewares/rateLimiter');
 
 const app = express();
 
 //entender o formato json
-app.use(bodyParser.json());
+app.use(bodyParser.json({ limit: 1000000 }));
 
 //entender quando passar parametros via url
-app.use(bodyParser.urlencoded({extended: false}));
+app.use(bodyParser.urlencoded({limit: 1000000, extended: false}));
 
 app.use(passport.initialize());
 app.use(passport.session());
+
+app.use(rateLimiter);
+
 
 require('./src/app/routers/index')(app);
 

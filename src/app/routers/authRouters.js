@@ -5,17 +5,11 @@ const authController = require('../controllers/authController');
 const configFace = require('../../modules/facebook/facebookConfig')
 
 
-router.post('/register', async (req, res) => {
-    return authController.registerUser(req, res);
-});
+router.post('/register', authController.registerUser);
 
-router.post('/login', async (req, res) => {
-    return authController.login(req, res);
-});
+router.post('/login', authController.login);
 
-router.get('/categorys', async (req, res) => {
-    return authController.listCategorys(req, res);
-});
+router.get('/categorys', authController.listCategorys);
 
 
 router.get('/facebook', passport.authenticate('facebook'));
