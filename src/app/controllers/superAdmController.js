@@ -191,7 +191,9 @@ async function uploadImage(req, res) {
 async function getImage(req, res) {
     try {
         
-        return res.sendFile(Path.join(__dirname, '../../uploads/' + req.params.fileName));
+        fs.unlinkSync(Path.join(__dirname, '../../uploads/' + req.params.fileName));
+        
+        return res.sendFile(Path.join(__dirname, '../../uploads/' + req.params.fileName)); 
     } catch (error) {
         console.log(error);
         
@@ -268,7 +270,7 @@ async function updateScale(req, res){
     const { _id, title, informations, minLabel, maxLabel, minScaleValue, maxScaleValue, image, extension, questions} = req.body;
     try {
         
-        const scale = await Scale.find(_id);
+        const scale = await Scale.find(_id).po;
         scale.title = title;
         scale.informations = informations;
         scale.minLabel = minLabel;
@@ -277,12 +279,14 @@ async function updateScale(req, res){
         scale.maxScaleValue = maxScaleValue;
 
         if(!image.includes("adm/image")){
-            await Promise.all(base64ToFile(image, extension, async a => {
-                scale.image = a;
+            fs.unlinkSync(Path.join(__dirname, '../../uploads/' + scale.image.split("/")[2]));
+            await Promise.all(base64ToFile(image, extension, async fileName => {
+                scale.image = fileName;
             }))
         }
+
         
-        // colocar questions
+        
 
         console.log(scale);
         

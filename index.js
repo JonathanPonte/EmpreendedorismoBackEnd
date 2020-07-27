@@ -22,6 +22,8 @@ require('./src/app/routers/index')(app);
 
 DefaultDatabd.createAdm();
 
-
+app.get('/dashboard', (req, res) => {
+    return res.send('Working!!');
+})
 
 app.listen(3000);

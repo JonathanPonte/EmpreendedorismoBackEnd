@@ -28,7 +28,7 @@ router.get('/fail', (req, res) => {
 });
 
 router.get('/', (req, res) => {
-    console.log(req.profile);
+    console.log(req);
     res.send("Success");
 });
 

@@ -10,8 +10,6 @@ const Answer = require('../models/Answer');
 const People = require('../models/People');
 
 
-//router.use(authmiddleware);
-
 async function answerScale(req, res) {
     const { peopleId, scaleId, answers } = req.body;
 
