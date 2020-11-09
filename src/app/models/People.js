@@ -9,6 +9,12 @@ const PeopleSchema = new mongoose.Schema({
     birthdate: {
         type: Date
     },
+    academicEducation:{
+        type: String
+    },
+    profession:{
+        type:String 
+    },
     user: {
         //forma que o mongo guarda um objeto no banco
         type: mongoose.Schema.Types.ObjectId,

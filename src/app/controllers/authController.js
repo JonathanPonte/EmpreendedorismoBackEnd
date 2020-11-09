@@ -26,7 +26,7 @@ async function cryptoPassword(password) {
 // registro de usuario comum no sistema
 async function registerUser(req, res) {
     try {
-        const { name, user } = req.body
+        const { name, user, academicEducation, profession} = req.body
         const email = user.email;
         console.log(user.password)
         var password = await cryptoPassword(user.password);
@@ -37,7 +37,7 @@ async function registerUser(req, res) {
         const splitDate = req.body.birthdate.split('/')
         const birthdate = new Date(splitDate[2], splitDate[1] - 1, splitDate[0], 00, 00, 00, 00);
 
-        const people = await People.create({ name, birthdate });
+        const people = await People.create({ name, birthdate, academicEducation, profession });
 
         const peopleUser = await User.create({ email, password });
 
@@ -75,7 +75,7 @@ async function login(req, res) {
 
         user.password = undefined
         var people = await People.findOne({ user })
-        if (people != null) {
+        if (people != null) { 
             people.user = user
             return res.send({
                 people,
