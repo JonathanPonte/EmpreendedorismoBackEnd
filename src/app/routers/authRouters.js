@@ -11,6 +11,10 @@ router.post('/login', authController.login);
 
 router.get('/categorys', authController.listCategorys);
 
+router.get('/escales', authController.listScales);
+
+router.get('/image/:fileName', authController.getImage);
+
 
 router.get('/facebook', passport.authenticate('facebook'));
 

@@ -5,7 +5,7 @@ const authmiddleware = require('../middlewares/authSuperAdm');
 const multer = require('multer');
 const multerConfig = require('../../modules/multer/multerConfig');
 
-//router.use(authmiddleware);
+// router.use(authmiddleware);
 
 //superAdm
 router.post('/', superAdmController.createSuperAdm);

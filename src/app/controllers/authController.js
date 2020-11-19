@@ -1,14 +1,14 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const authConfig = require('../../config/auth.json');
-
-
 const User = require('../models/User');
 const People = require('../models/People');
 const Adm = require('../models/Adm');
 const Category = require('../models/Category');
-
+const Scale = require('../models/Scale');
 const util = require('../util/util.json')
+const fs = require('fs');
+const Path = require('path');
 
 
 function generateToken(params = {}, secretCod) {
@@ -120,6 +120,8 @@ async function listCategorys(req, res) {
     try {
         const categorys = await Category.find();
 
+
+
         return res.send({ categorys });
     } catch (error) {
         return res.status(400).send({ erro: 'Error get categorys' });
@@ -127,5 +129,28 @@ async function listCategorys(req, res) {
 }
 
 
+async function listScales(req,res){
+    try {
+        const scales = await Scale.find();
 
-module.exports = { registerUser, login, listCategorys, loginWithFacebook };
+        return res.status(200).send({scales});
+    }   catch (error) {
+        return res.status(400).send({ erro: 'Error get scales' });
+    }
+}
+
+
+async function getImage(req, res) {
+    try {
+        
+        // fs.unlinkSync(Path.join(__dirname, '../../uploads/' + req.params.fileName));
+        
+        return res.sendFile(Path.join(__dirname, '../../uploads/' + req.params.fileName)); 
+    } catch (error) {
+        console.log(error);
+        
+    }
+}
+
+
+module.exports = { registerUser, login, listCategorys, listScales, loginWithFacebook, getImage};

@@ -52,6 +52,7 @@ async function createSuperAdm(req, res) {
 
 //modificar senha - Ok
 async function resetPassword(req, res) {
+
     try {
         var { id, email, currentPassword, newPassword, confirmationPassword } = req.body;
 
@@ -78,7 +79,7 @@ async function resetPassword(req, res) {
 
         await userModify.save();
 
-        return res.send({ Status: '200 OK' });
+        return res.status(200).send({ Status: '200 OK' });
     } catch (error) {
         console.log(error);
         return res.status(400).send({ error: 'Error update super adm' });
@@ -191,7 +192,7 @@ async function uploadImage(req, res) {
 async function getImage(req, res) {
     try {
         
-        fs.unlinkSync(Path.join(__dirname, '../../uploads/' + req.params.fileName));
+        // fs.unlinkSync(Path.join(__dirname, '../../uploads/' + req.params.fileName));
         
         return res.sendFile(Path.join(__dirname, '../../uploads/' + req.params.fileName)); 
     } catch (error) {
